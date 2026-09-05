@@ -4,6 +4,7 @@ const TEXTAREA_ID = 'private_persona_memo_textarea';
 const TOKEN_COUNT_ID = 'private_persona_memo_token_count';
 const FALLBACK_PREFIX = 'fallback:';
 const STABLE_PREFIX = 'persona-avatar:';
+const TOKEN_COUNT_DELAY = 1000;
 const DEFAULT_SETTINGS = Object.freeze({
     version: 1,
     copyMemoOnDuplicate: true,
@@ -265,11 +266,9 @@ async function updateNoteTokenCount() {
     }
 
     if (typeof getTokenCountAsync !== 'function') {
-        setTokenCount('...');
+        setTokenCount('?');
         return;
     }
-
-    setTokenCount('...');
 
     try {
         const count = await getTokenCountAsync(text);
@@ -286,7 +285,7 @@ async function updateNoteTokenCount() {
     }
 }
 
-function scheduleNoteTokenCount(delay = 200) {
+function scheduleNoteTokenCount(delay = TOKEN_COUNT_DELAY) {
     clearTimeout(tokenCountTimer);
     tokenCountTimer = setTimeout(updateNoteTokenCount, delay);
 }
@@ -409,7 +408,7 @@ function refreshMemoTextarea() {
     textarea.disabled = !identity.key;
     textarea.value = getNoteText(settings, identity.key);
     isApplyingMemo = false;
-    scheduleNoteTokenCount(0);
+    scheduleNoteTokenCount();
 }
 
 function scheduleRefresh(delay = 0) {
