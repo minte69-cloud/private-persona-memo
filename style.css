@@ -1,0 +1,37 @@
+#private_persona_memo_block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+}
+
+#private_persona_memo_block .private-persona-memo-header {
+    margin-bottom: 0;
+}
+
+#private_persona_memo_block .private-persona-memo-header .fa-lock {
+    margin-left: 6px;
+}
+
+#private_persona_memo_textarea {
+    min-height: 5.5em;
+    max-height: 35dvh;
+    resize: vertical;
+}
+
+#private_persona_memo_textarea:disabled {
+    opacity: 0.55;
+}
+
+#private_persona_memo_clear {
+    margin: 0;
+}
+
+#private_persona_memo_status {
+    min-height: 1.2em;
+}
+
+.private-persona-memo-footer {
+    display: flex;
+    justify-content: flex-end;
+}
