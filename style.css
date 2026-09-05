@@ -6,7 +6,10 @@
 }
 
 #private_persona_memo_block .private-persona-memo-header {
+    width: 100%;
+    justify-content: flex-start;
     margin-bottom: 0;
+    text-align: left;
 }
 
 #private_persona_memo_block .private-persona-memo-header .fa-lock {
