@@ -1,7 +1,6 @@
 const MODULE_NAME = 'private_persona_memo';
 const UI_ID = 'private_persona_memo_block';
 const TEXTAREA_ID = 'private_persona_memo_textarea';
-const STATUS_ID = 'private_persona_memo_status';
 const TOKEN_COUNT_ID = 'private_persona_memo_token_count';
 const FALLBACK_PREFIX = 'fallback:';
 const STABLE_PREFIX = 'persona-avatar:';
@@ -16,7 +15,6 @@ let initialized = false;
 let activeKey = '';
 let lastKnownAvatarId = '';
 let refreshTimer = null;
-let statusTimer = null;
 let tokenCountTimer = null;
 let tokenCountNonce = 0;
 let isApplyingMemo = false;
@@ -241,20 +239,6 @@ function migrateFallbackMemo(settings, identity) {
     saveSettings();
 }
 
-function showStatus(message) {
-    const status = document.getElementById(STATUS_ID);
-
-    if (!status) {
-        return;
-    }
-
-    status.textContent = message;
-    clearTimeout(statusTimer);
-    statusTimer = setTimeout(() => {
-        status.textContent = '';
-    }, 1600);
-}
-
 function setTokenCount(value) {
     const counter = document.getElementById(TOKEN_COUNT_ID);
 
@@ -328,7 +312,6 @@ function saveTextareaMemo() {
     activeKey = identity.key;
     setNoteText(settings, identity, textarea.value);
     saveSettings();
-    showStatus(textarea.value ? '개인 노트 저장됨' : '노트 비움');
     scheduleNoteTokenCount();
 }
 
@@ -369,10 +352,6 @@ function createMemoBlock() {
     const footer = document.createElement('div');
     footer.className = 'private-persona-memo-footer';
 
-    const status = document.createElement('small');
-    status.id = STATUS_ID;
-    status.className = 'text_muted';
-
     const tokenCounter = document.createElement('div');
     tokenCounter.className = 'extension_token_counter widthFitContent';
 
@@ -386,7 +365,7 @@ function createMemoBlock() {
     tokenCount.textContent = '0';
 
     tokenCounter.append(tokenLabel, tokenSeparator, tokenCount);
-    footer.append(status, tokenCounter);
+    footer.append(tokenCounter);
 
     block.append(header, textarea, footer);
     return block;
