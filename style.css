@@ -27,4 +27,9 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    width: 100%;
+}
+
+.private-persona-memo-footer .extension_token_counter {
+    margin-left: auto;
 }

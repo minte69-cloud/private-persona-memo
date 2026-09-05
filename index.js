@@ -352,7 +352,7 @@ function createMemoBlock() {
     footer.className = 'private-persona-memo-footer';
 
     const tokenCounter = document.createElement('div');
-    tokenCounter.className = 'extension_token_counter widthFitContent';
+    tokenCounter.className = 'extension_token_counter';
 
     const tokenLabel = document.createElement('span');
     tokenLabel.textContent = '페르소나 노트 토큰';
