@@ -23,15 +23,13 @@
     opacity: 0.55;
 }
 
-#private_persona_memo_clear {
-    margin: 0;
-}
-
 #private_persona_memo_status {
     min-height: 1.2em;
 }
 
 .private-persona-memo-footer {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
 }

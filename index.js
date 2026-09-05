@@ -2,7 +2,7 @@ const MODULE_NAME = 'private_persona_memo';
 const UI_ID = 'private_persona_memo_block';
 const TEXTAREA_ID = 'private_persona_memo_textarea';
 const STATUS_ID = 'private_persona_memo_status';
-const CLEAR_ID = 'private_persona_memo_clear';
+const TOKEN_COUNT_ID = 'private_persona_memo_token_count';
 const FALLBACK_PREFIX = 'fallback:';
 const STABLE_PREFIX = 'persona-avatar:';
 const DEFAULT_SETTINGS = Object.freeze({
@@ -17,6 +17,8 @@ let activeKey = '';
 let lastKnownAvatarId = '';
 let refreshTimer = null;
 let statusTimer = null;
+let tokenCountTimer = null;
+let tokenCountNonce = 0;
 let isApplyingMemo = false;
 
 function getContext() {
@@ -253,6 +255,58 @@ function showStatus(message) {
     }, 1600);
 }
 
+function setTokenCount(value) {
+    const counter = document.getElementById(TOKEN_COUNT_ID);
+
+    if (counter) {
+        counter.textContent = String(value);
+    }
+}
+
+async function updateNoteTokenCount() {
+    const textarea = document.getElementById(TEXTAREA_ID);
+    const getTokenCountAsync = getContext()?.getTokenCountAsync;
+
+    if (!(textarea instanceof HTMLTextAreaElement)) {
+        setTokenCount(0);
+        return;
+    }
+
+    const text = textarea.value;
+    const nonce = ++tokenCountNonce;
+
+    if (!text) {
+        setTokenCount(0);
+        return;
+    }
+
+    if (typeof getTokenCountAsync !== 'function') {
+        setTokenCount('...');
+        return;
+    }
+
+    setTokenCount('...');
+
+    try {
+        const count = await getTokenCountAsync(text);
+
+        if (nonce === tokenCountNonce) {
+            setTokenCount(count);
+        }
+    } catch (error) {
+        console.warn('[Private Persona Memo] Failed to count note tokens.', error);
+
+        if (nonce === tokenCountNonce) {
+            setTokenCount('?');
+        }
+    }
+}
+
+function scheduleNoteTokenCount(delay = 200) {
+    clearTimeout(tokenCountTimer);
+    tokenCountTimer = setTimeout(updateNoteTokenCount, delay);
+}
+
 function saveTextareaMemo() {
     if (isApplyingMemo) {
         return;
@@ -275,17 +329,7 @@ function saveTextareaMemo() {
     setNoteText(settings, identity, textarea.value);
     saveSettings();
     showStatus(textarea.value ? '개인 노트 저장됨' : '노트 비움');
-}
-
-function clearCurrentMemo() {
-    const textarea = document.getElementById(TEXTAREA_ID);
-
-    if (!(textarea instanceof HTMLTextAreaElement)) {
-        return;
-    }
-
-    textarea.value = '';
-    textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    scheduleNoteTokenCount();
 }
 
 function createMemoBlock() {
@@ -311,21 +355,7 @@ function createMemoBlock() {
     const spacer = document.createElement('span');
     spacer.className = 'flex1';
 
-    const clearButton = document.createElement('div');
-    clearButton.id = CLEAR_ID;
-    clearButton.className = 'menu_button fa-solid fa-eraser';
-    clearButton.title = '노트 비우기';
-    clearButton.setAttribute('role', 'button');
-    clearButton.setAttribute('tabindex', '0');
-    clearButton.addEventListener('click', clearCurrentMemo);
-    clearButton.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            clearCurrentMemo();
-        }
-    });
-
-    header.append(title, maximizeButton, lock, spacer, clearButton);
+    header.append(title, maximizeButton, lock, spacer);
 
     const textarea = document.createElement('textarea');
     textarea.id = TEXTAREA_ID;
@@ -342,7 +372,21 @@ function createMemoBlock() {
     const status = document.createElement('small');
     status.id = STATUS_ID;
     status.className = 'text_muted';
-    footer.append(status);
+
+    const tokenCounter = document.createElement('div');
+    tokenCounter.className = 'extension_token_counter widthFitContent';
+
+    const tokenLabel = document.createElement('span');
+    tokenLabel.textContent = '페르소나 노트 토큰';
+
+    const tokenSeparator = document.createTextNode(': ');
+
+    const tokenCount = document.createElement('span');
+    tokenCount.id = TOKEN_COUNT_ID;
+    tokenCount.textContent = '0';
+
+    tokenCounter.append(tokenLabel, tokenSeparator, tokenCount);
+    footer.append(status, tokenCounter);
 
     block.append(header, textarea, footer);
     return block;
@@ -386,6 +430,7 @@ function refreshMemoTextarea() {
     textarea.disabled = !identity.key;
     textarea.value = getNoteText(settings, identity.key);
     isApplyingMemo = false;
+    scheduleNoteTokenCount(0);
 }
 
 function scheduleRefresh(delay = 0) {
