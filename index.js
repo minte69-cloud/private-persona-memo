@@ -303,6 +303,11 @@ function createMemoBlock() {
     lock.className = 'fa-solid fa-lock opacity50p';
     lock.title = '페르소나 설명과 별도로 저장되며 프롬프트에 절대 추가되지 않습니다.';
 
+    const maximizeButton = document.createElement('i');
+    maximizeButton.className = 'editor_maximize fa-solid fa-maximize right_menu_button';
+    maximizeButton.dataset.for = TEXTAREA_ID;
+    maximizeButton.title = '큰 편집창으로 열기';
+
     const spacer = document.createElement('span');
     spacer.className = 'flex1';
 
@@ -320,7 +325,7 @@ function createMemoBlock() {
         }
     });
 
-    header.append(title, lock, spacer, clearButton);
+    header.append(title, maximizeButton, lock, spacer, clearButton);
 
     const textarea = document.createElement('textarea');
     textarea.id = TEXTAREA_ID;
