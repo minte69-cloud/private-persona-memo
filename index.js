@@ -274,7 +274,7 @@ function saveTextareaMemo() {
     activeKey = identity.key;
     setNoteText(settings, identity, textarea.value);
     saveSettings();
-    showStatus(textarea.value ? 'Saved privately' : 'Memo cleared');
+    showStatus(textarea.value ? '개인 노트 저장됨' : '노트 비움');
 }
 
 function clearCurrentMemo() {
@@ -297,11 +297,11 @@ function createMemoBlock() {
     header.className = 'flex-container alignItemsBaseline private-persona-memo-header';
 
     const title = document.createElement('span');
-    title.textContent = 'Private Memo';
+    title.textContent = 'Persona Note';
 
     const lock = document.createElement('i');
     lock.className = 'fa-solid fa-lock opacity50p';
-    lock.title = 'Stored separately from persona descriptions and never added to prompts.';
+    lock.title = '페르소나 설명과 별도로 저장되며 프롬프트에 절대 추가되지 않습니다.';
 
     const spacer = document.createElement('span');
     spacer.className = 'flex1';
@@ -309,7 +309,7 @@ function createMemoBlock() {
     const clearButton = document.createElement('div');
     clearButton.id = CLEAR_ID;
     clearButton.className = 'menu_button fa-solid fa-eraser';
-    clearButton.title = 'Clear memo';
+    clearButton.title = '노트 비우기';
     clearButton.setAttribute('role', 'button');
     clearButton.setAttribute('tabindex', '0');
     clearButton.addEventListener('click', clearCurrentMemo);
@@ -328,7 +328,7 @@ function createMemoBlock() {
     textarea.rows = 4;
     textarea.autocomplete = 'off';
     textarea.spellcheck = true;
-    textarea.placeholder = 'Private note for this persona...';
+    textarea.placeholder = '이 페르소나에 대한 개인 노트...';
     textarea.addEventListener('input', saveTextareaMemo);
 
     const footer = document.createElement('div');

@@ -1,10 +1,10 @@
-# Private Persona Memo
+# Persona Note
 
 A SillyTavern UI extension that adds a private memo textarea to the Persona Management panel.
 
 ## What It Does
 
-- Adds a `Private Memo` textarea below the persona description position controls.
+- Adds a `Persona Note` textarea below the persona description position controls.
 - Saves one memo per persona in `extensionSettings.private_persona_memo.notes`.
 - Uses the persona avatar id as the stable key whenever SillyTavern exposes it.
 - Falls back to a key derived from the visible persona name and avatar hint if a stable id cannot be found.
